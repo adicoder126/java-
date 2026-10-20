@@ -32,13 +32,20 @@ java-/
 │   └── bin/
 │       └── App.class               → Compiled output
 │
-└── servulate/                   → 🚀 Maven Project Skeleton
-    ├── .gitignore
-    ├── pom.xml                     → Maven config (Java 17)
-    └── src/
-        ├── main/java/com/serculate/
-        │   └── Main.java           → Entry point (Hello World)
-        └── test/java/              → (empty — ready for tests)
+├── servulate/                   → 🚀 Maven Project Skeleton
+│   ├── .gitignore
+│   ├── pom.xml                     → Maven config (Java 17)
+│   └── src/
+│       ├── main/java/com/serculate/
+│       │   └── Main.java           → Entry point (Hello World)
+│       └── test/java/              → (empty — ready for tests)
+│
+└── Shopsphere/                  → 🛒 Full-Stack E-Commerce Web App (Tomcat 11 + JSP/Servlet + MySQL)
+    ├── README.md                   → Dedicated documentation & setup guide
+    ├── pom.xml                     → Maven config (Jakarta Servlet 6.1, JSP 3.1, JSTL 3.0, MySQL)
+    ├── database/shopsphere.sql     → MySQL database schema & seed data
+    ├── src/main/java/              → Controllers, DAOs, Models, and DBConnection
+    └── src/main/webapp/            → Bootstrap 5 JSP views (Home, Products, Login, Register)
 ```
 
 ---
@@ -199,24 +206,109 @@ java -cp target/classes com.serculate.Main
 
 ---
 
+## 🛒 5. ShopSphere (Full-Stack E-Commerce Web App)
+
+A modern enterprise **Jakarta EE 10 e-commerce web application** built using **Jakarta Servlet 6.1**, **JSP 3.1**, **JSTL 3.0**, **JDBC**, **MySQL**, and **Apache Tomcat 11**, styled with **Bootstrap 5**.
+
+### Architecture
+
+```
+                      ┌──────────────────────────────────────┐
+                      │        Browser / Client              │
+                      └──────────────────┬───────────────────┘
+                                         │ HTTP Request
+                                         ▼
+                      ┌──────────────────────────────────────┐
+                      │       Apache Tomcat 11 Server        │
+                      │                                      │
+                      │  ┌────────────────────────────────┐  │
+                      │  │  ProductServlet (Controller)   │  │
+                      │  │       @WebServlet("/products") │  │
+                      │  └───────────────┬────────────────┘  │
+                      │                  │                   │
+                      │         Calls DAO│ Returns List<Product>
+                      │                  ▼                   │
+                      │  ┌────────────────────────────────┐  │
+                      │  │       ProductDAO (Data Access) │  │
+                      │  └───────────────┬────────────────┘  │
+                      │                  │                   │
+                      │                  │ JDBC / SQL        │
+                      │                  ▼                   │
+                      │  ┌────────────────────────────────┐  │
+                      │  │   MySQL Database (shopsphere)  │  │
+                      │  └────────────────────────────────┘  │
+                      │                  │                   │
+                      │                  │ Forwards Request  │
+                      │                  ▼                   │
+                      │  ┌────────────────────────────────┐  │
+                      │  │    JSP Views + JSTL Core       │  │
+                      │  │  (index.jsp, products.jsp, etc)│  │
+                      │  └────────────────────────────────┘  │
+                      └──────────────────┬───────────────────┘
+                                         │ Rendered HTML / CSS
+                                         ▼
+                      ┌──────────────────────────────────────┐
+                      │         User Web Interface           │
+                      └──────────────────────────────────────┘
+```
+
+| Component | Tech / Role | Description |
+|-----------|-------------|-------------|
+| [`ProductServlet.java`](Shopsphere/src/main/java/com/shopsphere/controller/ProductServlet.java) | Jakarta Servlet | Controller handling `/products` route & category filtering |
+| [`ProductDAO.java`](Shopsphere/src/main/java/com/shopsphere/dao/ProductDAO.java) | Data Access | JDBC queries for active product listings |
+| [`DBConnection.java`](Shopsphere/src/main/java/com/shopsphere/util/DBConnection.java) | Utility | MySQL database connection management |
+| [`Product.java`](Shopsphere/src/main/java/com/shopsphere/model/Product.java) | Model Bean | Entity representation of products |
+| [`index.jsp`](Shopsphere/src/main/webapp/index.jsp) | View (JSP) | Landing page with hero banner & category cards |
+| [`products.jsp`](Shopsphere/src/main/webapp/products.jsp) | View (JSP + JSTL) | Dynamic product catalog with stock & prices |
+| [`shopsphere.sql`](Shopsphere/database/shopsphere.sql) | Database | Schema with `users`, `categories`, `products` tables & seed data |
+
+📖 Detailed documentation: [`Shopsphere/README.md`](Shopsphere/README.md)
+
+### How to Run
+
+```bash
+cd Shopsphere
+
+# 1. Package WAR file
+mvn clean package
+
+# 2. Deploy to Tomcat 11
+cp target/shopsphere.war /opt/homebrew/opt/tomcat/libexec/webapps/
+
+# 3. Start Tomcat
+/opt/homebrew/opt/tomcat/bin/catalina start
+
+# 4. Open in browser:
+# http://localhost:8080/shopsphere/
+```
+
+---
+
 ## 🛠️ Tech Stack
 
 | Technology | Used In |
 |------------|---------|
-| **Java 17** | All projects |
+| **Java 17+** | All projects |
+| **Jakarta EE 10 / Servlet 6.1** | ShopSphere |
+| **Jakarta Server Pages (JSP) 3.1** | ShopSphere |
+| **Jakarta JSTL 3.0** | ShopSphere |
+| **Apache Tomcat 11** | ShopSphere |
+| **Bootstrap 5** | ShopSphere |
 | **Java Swing** | Calculator, Student Registration |
 | **Java RMI** | RMI Calculator |
-| **JDBC (java.sql)** | JDBC project |
-| **Maven** | Servulate |
-| **MVC Pattern** | Calculator |
+| **JDBC (java.sql)** | JDBC project, ShopSphere |
+| **MySQL 8.x** | ShopSphere |
+| **Maven** | Servulate, ShopSphere |
+| **MVC Pattern** | Calculator, ShopSphere |
 
 ---
 
 ## 📋 Prerequisites
 
 - **JDK 17** or higher
-- **Maven** (for servulate project only)
-- **MySQL / PostgreSQL** (for JDBC — when implemented)
+- **Maven 3.9+** (for Servulate and ShopSphere)
+- **Apache Tomcat 11** (for ShopSphere)
+- **MySQL 8.0+** (for ShopSphere and JDBC)
 
 ---
 
@@ -227,17 +319,24 @@ java -cp target/classes com.serculate.Main
 git clone https://github.com/adicoder126/java-.git
 cd java-
 
-# Run the Calculator
+# 1. Run the Calculator
 cd calculator && javac *.java && java main
 
-# Run the RMI Server + Client (needs 3 terminals)
+# 2. Run the RMI Server + Client (needs 3 terminals)
 cd RMI && javac *.java
 # Terminal 1: rmiregistry 5000
 # Terminal 2: java Server
 # Terminal 3: java client
 
-# Run the Servulate project
+# 3. Run the Servulate project
 cd servulate && mvn compile exec:java -Dexec.mainClass="com.serculate.Main"
+
+# 4. Run ShopSphere Web App (Tomcat 11)
+cd Shopsphere
+mvn clean package
+cp target/shopsphere.war /opt/homebrew/opt/tomcat/libexec/webapps/
+/opt/homebrew/opt/tomcat/bin/catalina start
+# Browse to: http://localhost:8080/shopsphere/
 ```
 
 ---
